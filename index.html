@@ -1,72 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab 9</title>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 9</title>
 
-  <style>
-    button {
-      margin: 3px;
-    }
+    <style>
+      button {
+        margin: 3px;
+      }
 
-    input[type="number"] {
-      width: 60px;
-    }
+      input[type="number"] {
+        width: 60px;
+      }
 
-    output {
-      border: 1px solid gray;
-      display: block;
-      height: 18px;
-      margin-top: 5px;
-      padding: 5px;
-      width: 240px;
-    }
-  </style>
-</head>
-<body>
-  <fieldset>
-    <legend>Error Calculator</legend>
-    <input type="number" name="first-num" id="first-num" />
-    <select name="operator" id="operator">
-      <option>+</option>
-      <option>-</option>
-      <option>*</option>
-      <option>/</option>
-    </select>
-    <input type="number" name="second-num" id="second-num" />
-    <button id="calculate">Calculate</button>
-    <br />
-    <output></output>
-  </fieldset>
+      output {
+        border: 1px solid gray;
+        display: block;
+        height: 18px;
+        margin-top: 5px;
+        padding: 5px;
+        width: 240px;
+      }
+    </style>
+  </head>
+  <body>
+    <fieldset>
+      <legend>Error Calculator</legend>
+      <input type="number" name="first-num" id="first-num" />
+      <select name="operator" id="operator">
+        <option>+</option>
+        <option>-</option>
+        <option>*</option>
+        <option>/</option>
+      </select>
+      <input type="number" name="second-num" id="second-num" />
+      <button id="calculate">Calculate</button>
+      <br />
+      <output></output>
+    </fieldset>
 
-  <section id="error-btns">
-    <button>Console Log Demo</button>
-    <button>Console Error Demo</button>
-    <button>Console Dir</button>
-    <button>Console dirxml</button>
-    <button>Console Group Start</button>
-    <button>Console Group End</button>
-    <button>Console Table</button>
-    <button>Start Timer</button>
-    <button>End Timer</button>
-    <button>Console Trace</button>
-    <button>Trigger a Global Error</button>
-  </section>
+    <section id="error-btns">
+      <button onclick="console.log('Console Log Demo')">Console Log Demo</button>
+      <button onclick="console.error('Console Error Demo')">Console Error Demo</button>
+      <button onclick="console.dir(errorBtns[2])">Console Dir</button>
+      <button onclick="console.dirxml(document.body)">Console dirxml</button>
+      <button onclick="console.group('Log Group')">Console Group Start</button>
+      <button onclick="console.groupEnd()">Console Group End</button>
+      <button>Console Table</button>
+      <button onclick="console.time()">Start Timer</button>
+      <button onclick="console.timeEnd()">End Timer</button>
+      <button>Console Trace</button>
+      <button onclick="throwError()">Trigger a Global Error</button>
+    </section>
 
-  <script>
-    let calculateBtn = document.querySelector('#calculate');
-    calculateBtn.addEventListener('click', () => {
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+    <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+    <script>
+      window.TrackJS && TrackJS.install({ 
+        token: "6ae92093c78e45b8b7963f5adf789bda"
+        // for more configuration options, see https://docs.trackjs.com
+      });
+    </script>
+                          
+    <script>
+      let calculateBtn = document.querySelector('#calculate');
+      calculateBtn.addEventListener('click', () => {
+        let output = document.querySelector('output');
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        let operator = document.querySelector('#operator').value;
+        try {
+          output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+        } catch(err) {
+          console.error("Could not Calculate");
+        } finally {
+          console.log("Calculated");
+        }
+      });
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
-    // TODO - Make buttons functional
-  </script>
-</body>
+      let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+      // TODO - Make buttons functional
+
+      errorBtns[6].addEventListener('click', () => {
+        console.table([
+          {subject: "Software Engineering", num: 110},
+          {subject: "Programming Languages", num: 130},
+          {subject: "Advanced Software Engineering", num: 112}
+        ]);
+      });
+      
+      errorBtns[9].addEventListener('click', () => {
+        const first = () => { second(); };
+        const second = () => { third(); };
+        const third = () => { fourth(); };
+        const fourth = () => { console.trace(); };
+        first();
+      });
+
+      class MyError extends Error {
+        constructor(message) {
+          super(message);
+          this.name = "MyError";
+        }
+      }
+      function throwError() {
+        throw new MyError("Sadly An Error Happened Friend");
+      }
+      
+
+    </script>
+  </body>
 </html>
